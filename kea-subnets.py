@@ -23,13 +23,13 @@ def filter_ip(value):
 @click.option('--url', envvar='NETBOX_URL', show_default='NETBOX_URL', required=True, help='Netbox base URL')
 @click.option('--token', envvar='NETBOX_TOKEN', show_default='NETBOX_TOKEN', required=True, help='Netbox API Token')
 @click.option('--parent-prefix', envvar='PARENT_PREFIX', default='0.0.0.0/0', show_default=True, help='Parent prefix (IPv4 or IPv6)')
-@click.option('--incpude-parent-prefix', envvar='INCLUDE_PARENT_PREFIX', default=True, show_default=True, help='If the parent prefix is in netbox it should be returned. if filtering for a single prefix, true, if filtering for multiple prefixes not nested in a parent prefix, true, if filtering for prefix under an exisitng parent, false.')
+@click.option('--include-parent-prefix', envvar='INCLUDE_PARENT_PREFIX', default=True, show_default=True, help='If the parent prefix is in netbox it should be returned. if filtering for a single prefix, true, if filtering for multiple prefixes not nested in a parent prefix, true, if filtering for prefix under an exisitng parent, false.')
 @click.option('--ip-range-role', envvar='RANGE_ROLE', default='dhcp-pool', show_default=True, help='Role slug for DHCP IP ranges')
 @click.option('--config', envvar='OUTPUT_PATH', help='Kea config file')
 @click.option('--template-path', envvar='TEMPLATE_PATH', default='./templates', show_default=True, help='Template search path. Must contain "subnet.yaml.j2".')
 @click.option('--log-level', envvar='LOG_LEVEL', default='DEBUG', show_default=True, help='Controls infroamtion output of what the application is doing, and intermidate data.')
 
-def main(url, token, parent_prefix, incpude_parent_prefix, ip_range_role, config, template_path, log_level):
+def main(url, token, parent_prefix, include_parent_prefix, ip_range_role, config, template_path, log_level):
     logging.basicConfig(
         level=log_level, 
         format='%(asctime)s - %(levelname)s - %(message)s'
@@ -45,7 +45,7 @@ def main(url, token, parent_prefix, incpude_parent_prefix, ip_range_role, config
 
     nb = pynetbox.api(url, token)
     # If the parent prefix filter is itself a prefix in netbox it will result in a malfromed output
-    if incpude_parent_prefix:
+    if include_parent_prefix:
         prefixes = nb.ipam.prefixes.filter(status='active', within_include=parent_prefix)
     else:
         prefixes = nb.ipam.prefixes.filter(status='active', within=parent_prefix)

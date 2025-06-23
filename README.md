@@ -38,11 +38,16 @@ or pass the `--url` and `--token` arguments on invocation.
 Netbox Prefixes (which represent Kea Subnets) can be selected using the `--parent-prefix` flag. 
 This also determines the address family - IPv4 or IPv6 - of the subnets.
 
+By default if a prefix matching the parrent prefix is included in netbox it will be processed as a subnet.
+If you are nesting prefixes, for example to document that a range of subnets delegated to another admin or used in routing, this can caused malformed output
+The `--include-parent-prefix` flag can be used to prevent this.  
+
 `0.0.0.0/0` (the default) or `::/0` can be used to select all subnets.
 
 Examples:
 - `--parent-prefix 192.168.0.0/16`
 - `--parent-prefix 2001:db8:1::/48`
+- `--parent-prefix 192.168.0.0/16 --include-parent-prefix false`
 
 ### IP Range Filter (`--ip-range-role`)
 
